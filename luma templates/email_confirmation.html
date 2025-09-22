@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Your Email - Luma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    
+    <div class="w-full max-w-md">
+        <!-- Confirmation Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            <!-- Logo -->
+            <div class="flex justify-center mb-8">
+                <img src="assets/luma_logo.svg" alt="Luma" class="w-32 h-8" />
+            </div>
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-3">Check your email</h1>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    We have sent password reset link to<br>
+                    <span id="userEmail" class="font-medium">edwardgullien@mac.com</span>
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="space-y-4">
+                <!-- Open Email App Button -->
+                <button
+                    type="button"
+                    id="openEmailBtn"
+                    class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 font-medium transition-all duration-200"
+                >
+                    Open email app
+                </button>
+
+                <!-- Resend Email Link -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Didn't receive the email? 
+                        <button type="button" id="resendBtn" class="text-blue-600 hover:text-blue-500 font-medium transition-colors duration-200">
+                            Click to resend
+                        </button>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Back to Login -->
+            <div class="mt-8 text-center">
+                <button type="button" id="backToLogin" class="flex items-center justify-center text-sm text-gray-600 hover:text-gray-800 mx-auto transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                        <path d="M6 8L2 12L6 16"/>
+                        <path d="M2 12H22"/>
+                    </svg>
+                    Back to log in
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get elements
+        const openEmailBtn = document.getElementById('openEmailBtn');
+        const resendBtn = document.getElementById('resendBtn');
+        const backToLogin = document.getElementById('backToLogin');
+        const userEmail = document.getElementById('userEmail');
+
+        // Get email from URL parameters or localStorage (simulated)
+        function getEmailFromStorage() {
+            // In a real app, this would come from URL params or stored data
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('email') || 'edwardgullien@mac.com';
+        }
+
+        // Set the email in the display
+        userEmail.textContent = getEmailFromStorage();
+
+        // Open email app functionality
+        openEmailBtn.addEventListener('click', function() {
+            // Try to open default email client
+            const email = getEmailFromStorage();
+            const subject = 'Password Reset - Luma';
+            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+            
+            // Show loading state briefly
+            this.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div>';
+            this.disabled = true;
+            
+            setTimeout(() => {
+                window.location.href = mailtoLink;
+                
+                // Reset button state
+                this.innerHTML = 'Open email app';
+                this.disabled = false;
+            }, 500);
+        });
+
+        // Resend email functionality
+        resendBtn.addEventListener('click', function() {
+            const originalText = this.textContent;
+            
+            // Show loading state
+            this.innerHTML = '<span class="inline-flex items-center"><div class="animate-spin rounded-full h-3 w-3 border-b border-blue-600 mr-2"></div>Sending...</span>';
+            this.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Show success message
+                showSuccess('Password reset email has been resent successfully!');
+                
+                // Reset button state
+                this.textContent = originalText;
+                this.disabled = false;
+                
+                // Update button text temporarily
+                this.textContent = 'Email sent!';
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 2000);
+                
+            }, 1500);
+        });
+
+        // Back to login
+        backToLogin.addEventListener('click', function() {
+            // Here you would navigate back to the login page
+            alert('Redirecting to login page...');
+        });
+
+        // Success message function
+        function showSuccess(message) {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.success-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create success element
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4 flex items-center text-sm';
+            successDiv.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 flex-shrink-0">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22,4 12,14.01 9,11.01"/>
+                </svg>
+                <span>${message}</span>
+            `;
+            
+            // Insert at the top of the card
+            const card = document.querySelector('.bg-white');
+            card.insertBefore(successDiv, card.firstChild);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                successDiv.remove();
+            }, 4000);
+        }
+
+        // Auto-check for email confirmation (polling simulation)
+        let checkInterval;
+        
+        function startEmailCheck() {
+            checkInterval = setInterval(() => {
+                // In a real app, this would check if the user clicked the email link
+                // For demo purposes, we'll just log
+                console.log('Checking for email confirmation...');
+            }, 5000);
+        }
+
+        // Stop checking when user leaves page
+        window.addEventListener('beforeunload', () => {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+            }
+        });
+
+        // Start checking for email confirmation
+        startEmailCheck();
+
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Enter key opens email app
+            if (e.key === 'Enter') {
+                openEmailBtn.click();
+            }
+            
+            // Escape key goes back to login
+            if (e.key === 'Escape') {
+                backToLogin.click();
+            }
+        });
+    </script>
+</body>
+</html>

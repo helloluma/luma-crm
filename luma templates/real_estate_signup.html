@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luma - Create Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    
+    <div class="w-full max-w-md">
+        <!-- Auth Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            <!-- Logo -->
+            <div class="flex justify-center mb-8">
+                <img src="assets/luma_logo.svg" alt="Luma" class="w-32 h-8" />
+            </div>
+
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Your Next Power Move</h1>
+                <p class="text-gray-600 text-sm">While others chase papers, you're chasing growth.</p>
+            </div>
+
+            <!-- Form -->
+            <form id="signupForm" class="space-y-6">
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        value="zoe@zoerealtor.com"
+                        readonly
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 cursor-not-allowed"
+                    >
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="password"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 pr-10"
+                            placeholder=""
+                        >
+                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 hover:text-gray-600">
+                                <path d="m15 18-.722-3.25"/>
+                                <path d="M2 8a10.645 10.645 0 0 0 20 0"/>
+                                <path d="m20 15-1.726-2.05"/>
+                                <path d="m4 15 1.726-2.05"/>
+                                <path d="m9 18 .722-3.25"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div>
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 pr-10"
+                            placeholder=""
+                        >
+                        <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 hover:text-gray-600">
+                                <path d="m15 18-.722-3.25"/>
+                                <path d="M2 8a10.645 10.645 0 0 0 20 0"/>
+                                <path d="m20 15-1.726-2.05"/>
+                                <path d="m4 15 1.726-2.05"/>
+                                <path d="m9 18 .722-3.25"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Password Requirements -->
+                <div class="space-y-2">
+                    <div id="lengthCheck" class="flex items-center text-sm text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-gray-400">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                        Must be at least 8 characters
+                    </div>
+                    <div id="specialCheck" class="flex items-center text-sm text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-gray-400">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                        Must contain one special character
+                    </div>
+                </div>
+
+                <!-- Continue Button -->
+                <button
+                    type="submit"
+                    id="continueBtn"
+                    class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled
+                >
+                    Continue
+                </button>
+            </form>
+
+            <!-- Footer Links -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Already using Luma? 
+                    <button type="button" id="loginLink" class="text-blue-600 hover:text-blue-500 font-medium">
+                        Log in
+                    </button>
+                </p>
+            </div>
+
+            <!-- Back Button -->
+            <div class="mt-6 text-center">
+                <button type="button" id="backBtn" class="flex items-center justify-center text-sm text-gray-600 hover:text-gray-800 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                        <path d="M6 8L2 12L6 16"/>
+                        <path d="M2 12H22"/>
+                    </svg>
+                    Back
+                </button>
+            </div>
+        </div>
+
+        <!-- Terms -->
+        <div class="mt-6 text-center">
+            <p class="text-xs text-gray-500">
+                By continuing, you agree to our 
+                <a href="#" class="text-blue-600 hover:text-blue-500">Terms of Service</a> 
+                and 
+                <a href="#" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Form elements
+        const form = document.getElementById('signupForm');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const togglePassword = document.getElementById('togglePassword');
+        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+        const continueBtn = document.getElementById('continueBtn');
+        const backBtn = document.getElementById('backBtn');
+        const loginLink = document.getElementById('loginLink');
+        const lengthCheck = document.getElementById('lengthCheck');
+        const specialCheck = document.getElementById('specialCheck');
+
+        // Password validation state
+        let validationState = {
+            length: false,
+            special: false,
+            match: false
+        };
+
+        // Password validation functions
+        function validateLength(password) {
+            return password.length >= 8;
+        }
+
+        function validateSpecialChar(password) {
+            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+            return specialCharRegex.test(password);
+        }
+
+        function validatePasswordMatch() {
+            return passwordInput.value === confirmPasswordInput.value && passwordInput.value !== '';
+        }
+
+        // Update check mark styling
+        function updateCheckMark(element, isValid) {
+            const svg = element.querySelector('svg');
+            if (isValid) {
+                element.classList.remove('text-gray-500');
+                element.classList.add('text-green-500');
+                svg.style.color = '#34D399';
+            } else {
+                element.classList.remove('text-green-500');
+                element.classList.add('text-gray-500');
+                svg.style.color = '#9CA3AF';
+            }
+        }
+
+        // Update continue button state
+        function updateContinueButton() {
+            const allValid = validationState.length && validationState.special && validationState.match;
+            continueBtn.disabled = !allValid;
+        }
+
+        // Password input validation
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            
+            // Check length
+            validationState.length = validateLength(password);
+            updateCheckMark(lengthCheck, validationState.length);
+            
+            // Check special character
+            validationState.special = validateSpecialChar(password);
+            updateCheckMark(specialCheck, validationState.special);
+            
+            // Check match if confirm password has value
+            if (confirmPasswordInput.value) {
+                validationState.match = validatePasswordMatch();
+                updateConfirmPasswordValidation();
+            }
+            
+            updateContinueButton();
+        });
+
+        // Confirm password validation
+        confirmPasswordInput.addEventListener('input', function() {
+            validationState.match = validatePasswordMatch();
+            updateConfirmPasswordValidation();
+            updateContinueButton();
+        });
+
+        function updateConfirmPasswordValidation() {
+            const confirmField = confirmPasswordInput.parentElement;
+            if (confirmPasswordInput.value && !validationState.match) {
+                confirmField.classList.add('border-red-300');
+                confirmPasswordInput.classList.add('border-red-300', 'focus:ring-red-500');
+                confirmPasswordInput.classList.remove('border-gray-300', 'focus:ring-blue-500');
+                
+                // Show error message if not already shown
+                if (!confirmField.querySelector('.error-text')) {
+                    const errorText = document.createElement('p');
+                    errorText.className = 'error-text text-xs text-red-600 mt-1';
+                    errorText.textContent = 'Passwords do not match';
+                    confirmField.appendChild(errorText);
+                }
+            } else {
+                confirmField.classList.remove('border-red-300');
+                confirmPasswordInput.classList.remove('border-red-300', 'focus:ring-red-500');
+                confirmPasswordInput.classList.add('border-gray-300', 'focus:ring-blue-500');
+                
+                // Remove error message
+                const errorText = confirmField.querySelector('.error-text');
+                if (errorText) {
+                    errorText.remove();
+                }
+            }
+        }
+
+        // Password toggle functionality
+        function setupPasswordToggle(toggleBtn, passwordField) {
+            toggleBtn.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                const svg = this.querySelector('svg');
+                if (type === 'password') {
+                    // Show eye-closed icon (password hidden)
+                    svg.innerHTML = `
+                        <path d="m15 18-.722-3.25"/>
+                        <path d="M2 8a10.645 10.645 0 0 0 20 0"/>
+                        <path d="m20 15-1.726-2.05"/>
+                        <path d="m4 15 1.726-2.05"/>
+                        <path d="m9 18 .722-3.25"/>
+                    `;
+                } else {
+                    // Show eye-open icon (password visible)
+                    svg.innerHTML = `
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    `;
+                }
+            });
+        }
+
+        setupPasswordToggle(togglePassword, passwordInput);
+        setupPasswordToggle(toggleConfirmPassword, confirmPasswordInput);
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!continueBtn.disabled) {
+                // Show loading state
+                continueBtn.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div>';
+                continueBtn.disabled = true;
+                
+                // Simulate account creation
+                setTimeout(() => {
+                    alert('Account created successfully! Redirecting to dashboard...');
+                    // Here you would redirect to the dashboard or next step
+                }, 2000);
+            }
+        });
+
+        // Back button
+        backBtn.addEventListener('click', function() {
+            // Here you would navigate back to the previous step
+            alert('Going back to email entry...');
+        });
+
+        // Login link
+        loginLink.addEventListener('click', function() {
+            // Here you would navigate to the login page
+            alert('Redirecting to login...');
+        });
+
+        // Input focus effects
+        const inputs = document.querySelectorAll('input[type="password"]');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                if (!this.classList.contains('border-red-300')) {
+                    this.classList.add('ring-2', 'ring-blue-500', 'ring-opacity-50');
+                }
+            });
+            
+            input.addEventListener('blur', function() {
+                this.classList.remove('ring-2', 'ring-blue-500', 'ring-opacity-50');
+            });
+        });
+    </script>
+</body>
+</html>

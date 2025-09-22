@@ -1,0 +1,44 @@
+ACTIVE: ADDRESS,NAME,SOURCE,S,B,PRICE,COMM %,GROSS COMM.,NET COMM.,BROKER,,,,PENDING TO DATE:,$0.00
+2406 Lebanon,Ramon Gonzalez,investor,seller,,"$215,000.00",2.5%,,,,,,,CLOSED TO DATE:,"$2,277,450.00"
+19210 Telegraph,Rodolfo Robles,lead,,,"$225,000.00",3.0%,,,,,,,,
+120 Raynor ,Alejandro Miranda,Investor,,,"$160,000.00",2.5,,,,,,,,
+,,,,,,,,,,,,,,
+TOTAL,,,,,"$440,000.00",,$0.00,$0.00,$0.00,,,,NET COMISSION TO DATE:,"$52,466.40"
+PENDING: ADDRESS,NAME,SOURCE,S,B,PRICE,COMM. %,GROSS COMM.,NET COMM.,BROKER,EST. CLOSING,CAP,,BROKER COMMISSION TO DATE:,"$13,266.60"
+405 Encino,,,,,,,,,,,,,,
+120 Raynor,,,,,,,,,,,$0.00,,REMAINING CAP:,"$4,733.40"
+1025 Olivas V Aoy,,,,,,,,,,,,,,
+,,,,,,,,,,,$0.00,,,
+,,,,,,,,,,,$0.00,,,
+,,,,,,,,,,,$0.00,,,
+,,,,,,,,,,,$0.00,,,
+TOTAL,,,,,$0.00,,$0.00,$0.00,$0.00,,$0.00,,,
+SOLD: ADDRESS,NAME,SOURCE,S,B,PRICE,COMM. %,GROSS COMM.,NET COMM.,BROKER,CLOSED DATE,CAP,,,
+609 Charles Heinrich,"Victor Chacon
+Patricia Chacon",previous clients,seller,,"$285,000.00",3.0%,"$8,550.00","$6,780.00",,,"$1,710.00",,,
+13881 Lorenz,"Ximena Sotelo
+Jorge Sotelo",Instagram,,buyers,"$269,950.00",4.0%,"$10,798.00","$8,578.40",,,"$2,159.60",,,
+2221 Sparrow Point,"Brianda Martinez
+Mario Martinez",Instagram,,buyers,"$215,500.00",3.0%,"$6,465.00","$5,112.00",,,"$1,293.00",,LIVES CHANGED GOAL:,20
+704 s Concepcion,Maribel Garcia,Instagram,,,"$190,000.00",2.5%,"$4,750.00","$3,740.00",,,$950.00,,LIVES LEFT TO CHANGE:,10
+11042 Mirage,Carlos De Leon,investor,seller,,"$149,000.00",2.50%,"$3,725.00","$2,920.00",,,$745.00,,,
+107 Barrel Cactus,Carlos De Leon,investor,,,"$189,000.00",2.5%,"$4,725.00","$3,720.00",,,$945.00,,,
+5032 Alps,Faviola and Juaquin,facebook,,buyer,"$205,000.00",2.0%,"$4,100.00","$3,220.00",,,$820.00,,,
+5708 Orlando,Kevin and Fatima Carabes,Instagram,,buyer,"$199,500.00",3.0%,"$5,985.00","$4,728.00",,,"$1,197.00",,,
+12865 Star Gaze,"Nohara Loya
+David Loya",lead,,buyers,"$345,000.00",3.0%,"$10,350.00","$8,220.00",,,"$2,070.00",,,
+12729 Raul Mendiola,Maria Elena and Javier Ortiz,TikTok,,buyers,"$229,500.00",3.0%,"$6,885.00","$5,448.00",,,"$1,377.00",,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+TOTAL,,,,,"$2,277,450.00",,"$66,333.00","$52,466.40",$0.00,,"$13,266.60",,,

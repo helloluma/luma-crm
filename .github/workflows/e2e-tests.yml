@@ -1,0 +1,321 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  e2e-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        shard: [1/4, 2/4, 3/4, 4/4]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps ${{ matrix.browser }}
+    
+    - name: Setup test database
+      run: |
+        npm run supabase:start
+        npm run db:setup
+        npm run db:seed
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    
+    - name: Run E2E tests
+      run: npx playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shard }}
+      env:
+        BASE_URL: http://localhost:3000
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-${{ matrix.browser }}-${{ matrix.shard }}
+        path: |
+          playwright-report/
+          test-results/
+        retention-days: 30
+
+  mobile-tests:
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium webkit
+    
+    - name: Setup test database
+      run: |
+        npm run supabase:start
+        npm run db:setup
+        npm run db:seed
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    
+    - name: Run Mobile Responsiveness Tests
+      run: npx playwright test tests/e2e/mobile-responsiveness.spec.ts --project="Mobile Chrome" --project="Mobile Safari"
+      env:
+        BASE_URL: http://localhost:3000
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+    
+    - name: Upload mobile test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: mobile-test-results
+        path: |
+          playwright-report/
+          test-results/
+        retention-days: 30
+
+  cross-browser-tests:
+    timeout-minutes: 90
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    
+    - name: Setup test database
+      run: |
+        npm run supabase:start
+        npm run db:setup
+        npm run db:seed
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    
+    - name: Run Cross-browser Tests
+      run: npx playwright test tests/e2e/cross-browser.spec.ts
+      env:
+        BASE_URL: http://localhost:3000
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+    
+    - name: Upload cross-browser test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cross-browser-test-results
+        path: |
+          playwright-report/
+          test-results/
+        retention-days: 30
+
+  visual-regression-tests:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
+    
+    - name: Setup test database
+      run: |
+        npm run supabase:start
+        npm run db:setup
+        npm run db:seed
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    
+    - name: Run Visual Regression Tests
+      run: npx playwright test tests/e2e/visual-regression.spec.ts --project=chromium
+      env:
+        BASE_URL: http://localhost:3000
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+    
+    - name: Upload visual test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: visual-regression-results
+        path: |
+          playwright-report/
+          test-results/
+          tests/e2e/visual-regression-screenshots/
+        retention-days: 30
+
+  performance-tests:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
+    
+    - name: Setup test database
+      run: |
+        npm run supabase:start
+        npm run db:setup
+        npm run db:seed
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    
+    - name: Run Performance Tests
+      run: npx playwright test tests/e2e/performance.spec.ts --project=chromium
+      env:
+        BASE_URL: http://localhost:3000
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+    
+    - name: Upload performance test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: performance-test-results
+        path: |
+          playwright-report/
+          test-results/
+          performance-reports/
+        retention-days: 30
+
+  test-report:
+    if: always()
+    needs: [e2e-tests, mobile-tests, cross-browser-tests, visual-regression-tests, performance-tests]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download all test results
+      uses: actions/download-artifact@v4
+      with:
+        path: test-results
+    
+    - name: Merge test reports
+      run: |
+        mkdir -p merged-reports
+        find test-results -name "*.json" -exec cp {} merged-reports/ \;
+        find test-results -name "*.xml" -exec cp {} merged-reports/ \;
+    
+    - name: Generate combined report
+      run: |
+        echo "# E2E Test Results" > test-summary.md
+        echo "" >> test-summary.md
+        echo "## Test Execution Summary" >> test-summary.md
+        echo "- E2E Tests: ${{ needs.e2e-tests.result }}" >> test-summary.md
+        echo "- Mobile Tests: ${{ needs.mobile-tests.result }}" >> test-summary.md
+        echo "- Cross-browser Tests: ${{ needs.cross-browser-tests.result }}" >> test-summary.md
+        echo "- Visual Regression Tests: ${{ needs.visual-regression-tests.result }}" >> test-summary.md
+        echo "- Performance Tests: ${{ needs.performance-tests.result }}" >> test-summary.md
+    
+    - name: Upload combined results
+      uses: actions/upload-artifact@v4
+      with:
+        name: combined-test-results
+        path: |
+          merged-reports/
+          test-summary.md
+        retention-days: 30
+
+  notify-results:
+    if: always()
+    needs: [test-report]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Notify on failure
+      if: ${{ contains(needs.*.result, 'failure') }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '❌ E2E tests failed. Please check the test results and fix any issues before merging.'
+          })
+    
+    - name: Notify on success
+      if: ${{ !contains(needs.*.result, 'failure') }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '✅ All E2E tests passed successfully!'
+          })
