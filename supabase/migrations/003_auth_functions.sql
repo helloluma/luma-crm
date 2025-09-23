@@ -7,7 +7,7 @@ BEGIN
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'Assistant')
+    COALESCE(NEW.raw_user_meta_data->>'role', 'Realtor')
   );
   RETURN NEW;
 END;
@@ -28,7 +28,7 @@ BEGIN
   FROM public.profiles
   WHERE id = user_id;
   
-  RETURN COALESCE(user_role, 'Assistant');
+  RETURN COALESCE(user_role, 'Realtor');
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -42,7 +42,7 @@ BEGIN
   FROM public.profiles
   WHERE id = user_id;
   
-  RETURN user_role IN ('SuperAdmin', 'Admin');
+  RETURN user_role IN ('SuperAdmin', 'Realtor');
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

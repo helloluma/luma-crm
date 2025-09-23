@@ -1,19 +1,36 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Client-side supabase instance
-export const supabase = createSupabaseClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
+function initClient() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // In development without env vars, avoid initializing to prevent SSR crashes
+    if (process.env.NODE_ENV === 'development') {
+      return null as any
+    }
+    throw new Error('Missing Supabase configuration')
   }
-})
+  return createSupabaseClient<Database>(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
+    }
+  })
+}
+
+// Client-side supabase instance (may be null in dev without env)
+export const supabase = initClient()
 
 // Server-side supabase client factory
 export function createClient() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    if (process.env.NODE_ENV === 'development') {
+      return null as any
+    }
+    throw new Error('Missing Supabase configuration')
+  }
   return createSupabaseClient<Database>(supabaseUrl, supabaseAnonKey, {
     auth: {
       autoRefreshToken: false,
@@ -32,7 +49,7 @@ export type Database = {
           id: string
           email: string
           name: string
-          role: 'SuperAdmin' | 'Admin' | 'Assistant'
+          role: 'SuperAdmin' | 'Realtor' | 'Assistant'
           avatar_url: string | null
           created_at: string
           updated_at: string
@@ -41,7 +58,7 @@ export type Database = {
           id: string
           email: string
           name: string
-          role?: 'SuperAdmin' | 'Admin' | 'Assistant'
+          role?: 'SuperAdmin' | 'Realtor' | 'Assistant'
           avatar_url?: string | null
           created_at?: string
           updated_at?: string
@@ -50,7 +67,7 @@ export type Database = {
           id?: string
           email?: string
           name?: string
-          role?: 'SuperAdmin' | 'Admin' | 'Assistant'
+          role?: 'SuperAdmin' | 'Realtor' | 'Assistant'
           avatar_url?: string | null
           created_at?: string
           updated_at?: string

@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { CSRFProtection, createRateLimit, rateLimitConfig } from './lib/security';
-
-// Initialize rate limiters
-const generalRateLimit = createRateLimit(rateLimitConfig.general);
-const authRateLimit = createRateLimit(rateLimitConfig.auth);
-const uploadRateLimit = createRateLimit(rateLimitConfig.upload);
 
 export async function middleware(request: NextRequest) {
+  // In development, skip middleware to avoid edge/runtime issues and speed up DX
+  if (process.env.NODE_ENV === 'development') {
+    return NextResponse.next();
+  }
+
+  // Dynamically import heavier modules only in production
+  const [{ CSRFProtection, createRateLimit, rateLimitConfig }, { createClient }] = await Promise.all([
+    import('./lib/security'),
+    import('@supabase/supabase-js') as any
+  ]);
+
   const response = NextResponse.next();
-  
+
   // Add security headers to all responses
   const secureHeaders = CSRFProtection.getSecureHeaders();
   Object.entries(secureHeaders).forEach(([key, value]) => {
@@ -26,10 +30,14 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Initialize rate limiters
+  const generalRateLimit = createRateLimit(rateLimitConfig.general);
+  const authRateLimit = createRateLimit(rateLimitConfig.auth);
+  const uploadRateLimit = createRateLimit(rateLimitConfig.upload);
+
   // Apply rate limiting based on route
   let rateLimitResult;
-  
-  if (request.nextUrl.pathname.startsWith('/api/auth') || 
+  if (request.nextUrl.pathname.startsWith('/api/auth') ||
       request.nextUrl.pathname.includes('/login') ||
       request.nextUrl.pathname.includes('/register')) {
     rateLimitResult = authRateLimit(request);
@@ -43,16 +51,14 @@ export async function middleware(request: NextRequest) {
   // Handle rate limiting
   if (rateLimitResult?.blocked) {
     return new NextResponse(
-      JSON.stringify({ 
-        error: 'Too many requests', 
-        resetTime: rateLimitResult.resetTime 
+      JSON.stringify({
+        error: 'Too many requests',
+        resetTime: rateLimitResult.resetTime
       }),
       {
         status: 429,
         headers: {
-          'Content-Type': 'application/json',
-          'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString(),
-          ...secureHeaders
+          'Content-Type': 'application/json'
         }
       }
     );
@@ -90,26 +96,23 @@ export async function middleware(request: NextRequest) {
       request.nextUrl.pathname.startsWith('/clients') ||
       request.nextUrl.pathname.startsWith('/calendar') ||
       request.nextUrl.pathname.startsWith('/revenue-analytics')) {
-    
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
+
+    const { createClient: createSbClient } = await import('@supabase/supabase-js');
+    const supabase = createSbClient(supabaseUrl, supabaseAnonKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
     });
 
     const token = request.cookies.get('sb-access-token')?.value;
-    
+
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
     try {
       const { data: { user }, error } = await supabase.auth.getUser(token);
-      
       if (error || !user) {
         return NextResponse.redirect(new URL('/login', request.url));
       }
@@ -120,28 +123,19 @@ export async function middleware(request: NextRequest) {
         response.headers.set('x-user-email', user.email || '');
       }
     } catch (error) {
-      console.error('Auth middleware error:', error);
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 
   // API route authentication
-  if (request.nextUrl.pathname.startsWith('/api/') && 
+  if (request.nextUrl.pathname.startsWith('/api/') &&
       !request.nextUrl.pathname.startsWith('/api/auth/') &&
       !request.nextUrl.pathname.startsWith('/api/calendar/public/')) {
-    
     const authHeader = request.headers.get('authorization');
-    
     if (!authHeader?.startsWith('Bearer ')) {
       return new NextResponse(
         JSON.stringify({ error: 'Missing or invalid authorization header' }),
-        {
-          status: 401,
-          headers: {
-            'Content-Type': 'application/json',
-            ...secureHeaders
-          }
-        }
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
   }
@@ -151,13 +145,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
     '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
 };

@@ -1,54 +1,53 @@
+'use client'
+
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
+
+const LoginForm = dynamic(() => import('@/components/auth/LoginForm'), { ssr: false })
+
 export default function Home() {
+  const searchParams = useSearchParams()
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+
+  useEffect(() => {
+    const message = searchParams.get('message')
+    if (message === 'email_confirmed') {
+      setShowSuccessMessage(true)
+      // Hide the message after 5 seconds
+      setTimeout(() => setShowSuccessMessage(false), 5000)
+    }
+  }, [searchParams])
+
+  const handleSuccess = () => {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/dashboard'
+    }
+  }
+
+  const goToRegister = () => {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/register'
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-card rounded-lg shadow-sm border p-8">
-            <h1 className="text-3xl font-bold text-foreground mb-4">
-              Real Estate CRM
-            </h1>
-            <p className="text-muted-foreground mb-6">
-              Professional real estate CRM for managing clients, deals, and business operations.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-muted rounded-lg p-6">
-                <h3 className="font-semibold text-foreground mb-2">Client Management</h3>
-                <p className="text-sm text-muted-foreground">
-                  Track clients through your sales pipeline from lead to closing.
-                </p>
-              </div>
-              
-              <div className="bg-muted rounded-lg p-6">
-                <h3 className="font-semibold text-foreground mb-2">Financial Tracking</h3>
-                <p className="text-sm text-muted-foreground">
-                  Monitor commissions, revenue, and financial performance.
-                </p>
-              </div>
-              
-              <div className="bg-muted rounded-lg p-6">
-                <h3 className="font-semibold text-foreground mb-2">Calendar & Scheduling</h3>
-                <p className="text-sm text-muted-foreground">
-                  Manage appointments, deadlines, and important dates.
-                </p>
-              </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Success Message */}
+        {showSuccessMessage && (
+          <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-center">
+            <div className="flex items-center justify-center mb-2">
+              <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="font-medium">Email Confirmed!</span>
             </div>
-            
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <a 
-                href="/dashboard" 
-                className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                View Dashboard
-              </a>
-              <div className="p-4 bg-secondary rounded-lg flex-1">
-                <p className="text-sm text-secondary-foreground">
-                  <strong>Project Setup Complete!</strong> Next.js 15+, TypeScript, Tailwind CSS, and all required dependencies have been installed and configured.
-                </p>
-              </div>
-            </div>
+            <p className="text-sm">Your account has been activated. You can now log in below.</p>
           </div>
-        </div>
+        )}
+        
+        <LoginForm onSuccess={handleSuccess} onRegister={goToRegister} />
       </div>
     </div>
   );

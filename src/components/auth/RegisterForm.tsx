@@ -14,7 +14,7 @@ const registerSchema = z.object({
     .min(8, 'Password must be at least 8 characters')
     .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character'),
   confirmPassword: z.string(),
-  role: z.enum(['SuperAdmin', 'Admin', 'Assistant'] as const).default('Assistant')
+  role: z.enum(['Realtor'] as const).default('Realtor')
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -41,7 +41,7 @@ export default function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) 
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      role: 'Assistant'
+      role: 'Realtor'
     }
   })
 
@@ -79,7 +79,9 @@ export default function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) 
       }
 
       if (authData.user) {
-        onSuccess?.()
+        // Always show confirmation screen for new signups
+        // The user will need to confirm their email before accessing the dashboard
+        onSuccess?.(data.email)
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.')
@@ -150,21 +152,8 @@ export default function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) 
             )}
           </div>
 
-          {/* Role Selection */}
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-              Role
-            </label>
-            <select
-              {...register('role')}
-              id="role"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900"
-            >
-              <option value="Assistant">Assistant</option>
-              <option value="Admin">Admin</option>
-              <option value="SuperAdmin">Super Admin</option>
-            </select>
-          </div>
+          {/* Role is automatically set to Realtor */}
+          <input type="hidden" {...register('role')} value="Realtor" />
 
           {/* Password Field */}
           <div>
@@ -281,9 +270,9 @@ export default function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) 
       <div className="mt-6 text-center">
         <p className="text-xs text-gray-500">
           By continuing, you agree to our{' '}
-          <a href="#" className="text-blue-600 hover:text-blue-500">Terms of Service</a>{' '}
+          <a href="/terms" className="text-blue-600 hover:text-blue-500">Terms of Service</a>{' '}
           and{' '}
-          <a href="#" className="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+          <a href="/privacy" className="text-blue-600 hover:text-blue-500">Privacy Policy</a>
         </p>
       </div>
     </div>

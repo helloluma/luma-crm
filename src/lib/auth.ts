@@ -13,9 +13,10 @@ export const auth = {
       email,
       password,
       options: {
+        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
         data: {
           name: userData.name,
-          role: userData.role || 'Assistant'
+          role: userData.role || 'Realtor'
         }
       }
     })
@@ -129,12 +130,12 @@ export const profiles = {
 
 // Role-based access control helpers
 export const rbac = {
-  canViewAllClients: (role: UserRole) => ['SuperAdmin', 'Admin'].includes(role),
-  canEditAllClients: (role: UserRole) => ['SuperAdmin', 'Admin'].includes(role),
-  canDeleteClients: (role: UserRole) => ['SuperAdmin', 'Admin'].includes(role),
+  canViewAllClients: (role: UserRole) => ['SuperAdmin', 'Realtor'].includes(role),
+  canEditAllClients: (role: UserRole) => ['SuperAdmin', 'Realtor'].includes(role),
+  canDeleteClients: (role: UserRole) => ['SuperAdmin', 'Realtor'].includes(role),
   canManageUsers: (role: UserRole) => role === 'SuperAdmin',
-  canViewReports: (role: UserRole) => ['SuperAdmin', 'Admin'].includes(role),
-  canManageSettings: (role: UserRole) => ['SuperAdmin', 'Admin'].includes(role)
+  canViewReports: (role: UserRole) => ['SuperAdmin', 'Realtor'].includes(role),
+  canManageSettings: (role: UserRole) => ['SuperAdmin', 'Realtor'].includes(role)
 }
 
 // Session management

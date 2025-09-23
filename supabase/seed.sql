@@ -3,10 +3,12 @@
 
 -- Insert sample profiles (these would normally be created via auth signup)
 -- For development, we'll create some sample data assuming users exist
+-- Note: SuperAdmin is hardcoded and not available for registration
+-- All signups are Realtors; Assistants are added by Realtors via dashboard
 INSERT INTO public.profiles (id, email, name, role) VALUES
   ('00000000-0000-0000-0000-000000000001', 'admin@realestate.com', 'Admin User', 'SuperAdmin'),
-  ('00000000-0000-0000-0000-000000000002', 'agent1@realestate.com', 'John Smith', 'Admin'),
-  ('00000000-0000-0000-0000-000000000003', 'agent2@realestate.com', 'Sarah Johnson', 'Assistant')
+  ('00000000-0000-0000-0000-000000000002', 'agent1@realestate.com', 'John Smith', 'Realtor'),
+  ('00000000-0000-0000-0000-000000000003', 'agent2@realestate.com', 'Sarah Johnson', 'Realtor')
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert sample clients
